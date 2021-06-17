@@ -56,10 +56,9 @@ services:
     depends_on:
       - zookeeper
 
-
-  schemaregistry:
+  sr1:
     image: confluentinc/cp-schema-registry:6.2.0
-    container_name: schemaregistry
+    container_name: sr1
     restart: always
     networks:
       - tyk
@@ -69,11 +68,25 @@ services:
       - 8081:8081
     environment:
       CUB_CLASSPATH: '/usr/share/java/confluent-security/schema-registry/*:/usr/share/java/schema-registry/*:/usr/share/java/cp-base-new/*'
-
-      SCHEMA_REGISTRY_HOST_NAME: schemaregistry
-
+      SCHEMA_REGISTRY_HOST_NAME: sr1
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka1:9091
       SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+
+  sr2:
+    image: confluentinc/cp-schema-registry:6.2.0
+    container_name: sr2
+    restart: always
+    networks:
+      - tyk
+    depends_on:
+      - kafka1
+    ports:
+      - 8082:8082
+    environment:
+      CUB_CLASSPATH: '/usr/share/java/confluent-security/schema-registry/*:/usr/share/java/schema-registry/*:/usr/share/java/cp-base-new/*'
+      SCHEMA_REGISTRY_HOST_NAME: sr2
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka1:9091
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8082
 
 networks:
   tyk:

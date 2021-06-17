@@ -1,6 +1,6 @@
 {
     "name": "SR1 API",
-    "api_id": "sr1",
+    "api_id": "sr2",
     "org_id": "default",
     "definition": {
         "location": "header",
@@ -17,8 +17,8 @@
     },
     "driver": "otto",
     "proxy": {
-        "listen_path": "/sr1/",
-        "target_url": "http://localhost:8081/",
+        "listen_path": "/sr2/",
+        "target_url": "http://sr2:8082/",
         "strip_listen_path": true
     }
 }
