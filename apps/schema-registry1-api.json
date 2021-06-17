@@ -1,0 +1,24 @@
+{
+    "name": "SR1 API",
+    "api_id": "sr1",
+    "org_id": "default",
+    "definition": {
+        "location": "header",
+        "key": "version"
+    },
+    "use_keyless": true,
+    "version_data": {
+        "not_versioned": true,
+        "versions": {
+            "Default": {
+                "name": "Default"
+            }
+        }
+    },
+    "driver": "otto",
+    "proxy": {
+        "listen_path": "/sr1/",
+        "target_url": "http://localhost:8081/",
+        "strip_listen_path": true
+    }
+}

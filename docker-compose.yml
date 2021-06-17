@@ -22,5 +22,58 @@ services:
     ports:
       - 6379:6379
 
+  zookeeper:
+    image: confluentinc/cp-zookeeper:6.2.0
+    restart: always
+    hostname: zookeeper
+    container_name: zookeeper
+    ports:
+      - 2181:2181
+    networks:
+      - tyk
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka1:
+    image: confluentinc/cp-server:6.2.0
+    hostname: kafka1
+    container_name: kafka1
+    networks:
+      - tyk
+    ports:
+      - "9091:9091"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka1:9091
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+    depends_on:
+      - zookeeper
+
+
+  schemaregistry:
+    image: confluentinc/cp-schema-registry:6.2.0
+    container_name: schemaregistry
+    restart: always
+    networks:
+      - tyk
+    depends_on:
+      - kafka1
+    ports:
+      - 8081:8081
+    environment:
+      CUB_CLASSPATH: '/usr/share/java/confluent-security/schema-registry/*:/usr/share/java/schema-registry/*:/usr/share/java/cp-base-new/*'
+
+      SCHEMA_REGISTRY_HOST_NAME: schemaregistry
+
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka1:9091
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+
 networks:
   tyk:
